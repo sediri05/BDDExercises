@@ -5,9 +5,9 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
-@CucumberOptions (features = "src/test/java/Framework/Features/Ex2.feature",
+@CucumberOptions (features = "src/test/java/Framework/Features/Ex3.feature",
         glue = {"Framework.stepDefinitions"}
-        ,format = {"pretty", "json:target/cucumber.json"}
+        //,format = {"pretty", "json:target/cucumber.json"}
         )
 public class runner
 {

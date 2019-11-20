@@ -21,4 +21,10 @@ public class NavigationBarObjects {
 
     @FindBy(xpath = "//a[@class='logout']")
     public WebElement signOutButton;
+
+    @FindBy(xpath = "//input[@id='search_query_top']")
+    public WebElement searchField;
+
+    @FindBy(xpath = "//button[@name='submit_search']")
+    public WebElement searchButton;
 }

@@ -19,11 +19,17 @@ public class NavigationBarActions extends DriverFactory {
         wait10.until(ExpectedConditions.elementToBeClickable(nbo.signInButton)).click();
     }
 
-    public void clickContactUs(){
+    public void clickContactUs() {
         wait10.until(ExpectedConditions.elementToBeClickable(nbo.contactUsButton)).click();
     }
 
-    public void clickSignOut(){
+    public void clickSignOut() {
         wait10.until(ExpectedConditions.elementToBeClickable(nbo.signOutButton)).click();
+    }
+
+    public void searchForItem(String item) {
+        wait10.until(ExpectedConditions.visibilityOf(nbo.searchField)).clear();
+        nbo.searchField.sendKeys(item);
+        nbo.searchButton.click();
     }
 }
