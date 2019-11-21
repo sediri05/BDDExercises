@@ -1,7 +1,15 @@
 package Framework.Utilities;
 
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.FileInputStream;
@@ -9,7 +17,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class DriverFactory {
@@ -38,10 +50,86 @@ public class DriverFactory {
 
 
     private static WebDriver GetDriver(Properties prop) {
-        switch (prop.getProperty("Browser")) {
-            case "Chrome":
+        switch (prop.getProperty("Browser").toLowerCase()) {
+            case "chrome":
                 System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver.exe");
-                driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+                HashMap<String, Object> cPrefs = new HashMap<String, Object>();
+                cPrefs.put("profile.default_content_settings.popups", 0);
+                cPrefs.put("download.default_directory", System.getProperty("user.dir"));
+                if (prop.getProperty("Headless").equalsIgnoreCase("true")) {
+                    cPrefs.put("cmd", "Page.setDownloadBehavior");
+                    options.setHeadless(true);
+                    options.addArguments("--test-type");
+                    options.addArguments("--disable-extensions"); //to disable browser extension popup
+                    Map<String, String> param = new HashMap<>();
+                    param.put("behavior", "allow");
+                    param.put("downloadPath", System.getProperty("user.dir"));
+                    cPrefs.put("params", param);
+                    options.addArguments("window-size=1920,1080");
+                }
+                options.setExperimentalOption("prefs", cPrefs);
+                driver = new ChromeDriver(options);
+                break;
+            case "firefox":
+                System.setProperty("webdriver.gecko.driver", System.getProperty("user.dir") + "/src/main/resources/geckodriver.exe");
+                FirefoxProfile fxProfile = new FirefoxProfile();
+                FirefoxOptions fOptions = new FirefoxOptions();
+                fxProfile.setPreference("browser.download.folderList", 2);
+                fxProfile.setPreference("browser.download.dir", System.getProperty("user.dir"));
+                fxProfile.setPreference("browser.download.useDownloadDir", true);
+                fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf");
+                fxProfile.setPreference("pdfjs.disabled", true);
+                if (prop.getProperty("Headless").equalsIgnoreCase("true")) {
+                    fOptions.setHeadless(true);
+                }
+                fOptions.addArguments("window-size=1920,1080");
+                fOptions.setProfile(fxProfile);
+                driver = new FirefoxDriver((fOptions));
+                break;
+            case "grid":
+                if (prop.getProperty("GridBrowser").equalsIgnoreCase("chrome")) {
+                    ChromeOptions cOptions = new ChromeOptions();
+                    DesiredCapabilities cCap = new DesiredCapabilities();
+                    cCap.setBrowserName("chrome");
+                    cCap.setPlatform(Platform.WIN10);
+                    cOptions.merge(cCap);
+                    if (prop.getProperty("Headless").equalsIgnoreCase("True")) {
+                        cOptions.setHeadless(true);
+                        cOptions.addArguments("window-size=1920,1080");
+                    }
+                    HashMap<String, Object> cPrefs2 = new HashMap<String, Object>();
+                    cPrefs2.put("profile.default_content_settings.popups", 0);
+                    cPrefs2.put("download.default_directory", System.getProperty("user.dir"));
+                    cOptions.setExperimentalOption("prefs", cPrefs2);
+                    try {
+                        driver = new RemoteWebDriver(new URL(prop.getProperty("nodeURL")), cOptions);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                } else if (prop.getProperty("GridBrowser").matches("firefox")) {
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    DesiredCapabilities fCap = new DesiredCapabilities();
+                    fCap.setBrowserName("firefox");
+                    fCap.setPlatform(Platform.WINDOWS);
+                    firefoxOptions.merge(fCap);
+                    if (prop.getProperty("Headless").equalsIgnoreCase("True")) {
+                        firefoxOptions.setHeadless(true);
+                        firefoxOptions.addArguments("window-size=1920,1080");
+                    }
+                    FirefoxProfile fxProfile2 = new FirefoxProfile();
+                    fxProfile2.setPreference("browser.download.folderList", 2);
+                    fxProfile2.setPreference("browser.download.dir", System.getProperty("user.dir"));
+                    fxProfile2.setPreference("browser.download.useDownloadDir", true);
+                    fxProfile2.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf");
+                    fxProfile2.setPreference("pdfjs.disabled", true);
+                    firefoxOptions.setProfile(fxProfile2);
+                    try {
+                        driver = new RemoteWebDriver(new URL(prop.getProperty("nodeURL")), firefoxOptions);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
             default:
                 driver = null;
@@ -68,11 +156,11 @@ public class DriverFactory {
         return bd.doubleValue();
     }
 
-    public void writeToPropFile(String newValue, String Attribute){
+    public void writeToPropFile(String newValue, String Attribute) {
         try {
-            FileOutputStream out =  new FileOutputStream(System.getProperty("user.dir") + "/src/main/java/Framework/Utilities/Data.properties");
+            FileOutputStream out = new FileOutputStream(System.getProperty("user.dir") + "/src/main/java/Framework/Utilities/Data.properties");
             prop.setProperty(Attribute, newValue);
-            prop.store(out,null);
+            prop.store(out, null);
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
