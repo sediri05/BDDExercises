@@ -1,6 +1,5 @@
 package Framework.Utilities;
 
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,8 +20,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DriverFactory {
     public static WebDriver driver;
@@ -31,11 +31,14 @@ public class DriverFactory {
     public static WebDriverWait wait10;
     public static ArrayList<String> prices = new ArrayList<>();
     public static ArrayList<String> items = new ArrayList<>();
+    public static Logger log;
 
 
-    public void setUp() {
+    public void setUp(String scenarioName) {
         prop = new Properties();
         try {
+            log =LogManager.getLogger(scenarioName);
+            log.debug("Initialising log4j");
             ip = new FileInputStream(System.getProperty("user.dir") + "/src/main/java/Framework/Utilities/Data.properties");
             prop.load(ip);
             driver = GetDriver(prop);
@@ -58,14 +61,14 @@ public class DriverFactory {
                 cPrefs.put("profile.default_content_settings.popups", 0);
                 cPrefs.put("download.default_directory", System.getProperty("user.dir"));
                 if (prop.getProperty("Headless").equalsIgnoreCase("true")) {
-                    cPrefs.put("cmd", "Page.setDownloadBehavior");
+                    //cPrefs.put("cmd", "Page.setDownloadBehavior");
                     options.setHeadless(true);
-                    options.addArguments("--test-type");
-                    options.addArguments("--disable-extensions"); //to disable browser extension popup
-                    Map<String, String> param = new HashMap<>();
-                    param.put("behavior", "allow");
-                    param.put("downloadPath", System.getProperty("user.dir"));
-                    cPrefs.put("params", param);
+                    //options.addArguments("--test-type");
+                    //options.addArguments("--disable-extensions"); //to disable browser extension popup
+                    //Map<String, String> param = new HashMap<>();
+                    //param.put("behavior", "allow");
+                    //param.put("downloadPath", System.getProperty("user.dir"));
+                    //cPrefs.put("params", param);
                     options.addArguments("window-size=1920,1080");
                 }
                 options.setExperimentalOption("prefs", cPrefs);
