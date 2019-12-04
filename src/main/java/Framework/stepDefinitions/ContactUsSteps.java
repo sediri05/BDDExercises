@@ -3,10 +3,18 @@ package Framework.stepDefinitions;
 import Framework.Managers.PageObjectManager;
 import Framework.Utilities.DriverFactory;
 import Framework.Utilities.Log;
+import cucumber.api.Scenario;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+
+import java.io.File;
 
 public class ContactUsSteps extends DriverFactory {
     private PageObjectManager tempObj = new PageObjectManager(driver);
@@ -41,6 +49,7 @@ public class ContactUsSteps extends DriverFactory {
 
     @And("^logs out$")
     public void Logout(){
+        Assert.assertTrue(false);
         //tempObj.getNavBarActions().clickSignOut();
         //Log.info("Signed out successfully");
     }
