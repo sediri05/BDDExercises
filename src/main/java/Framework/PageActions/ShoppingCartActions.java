@@ -5,6 +5,8 @@ import Framework.Utilities.DriverFactory;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.testng.internal.annotations.ExpectedExceptionsAnnotation;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,7 @@ public class ShoppingCartActions extends DriverFactory {
     }
 
     public void verifyItems(ArrayList<String> items){
+        wait10.until(ExpectedConditions.visibilityOf(sco.proceedToCheckoutButton));
         ArrayList<String>productDetails = new ArrayList<String>();
         for(WebElement x:sco.products){
             productDetails.add(x.getText().toLowerCase());

@@ -49,7 +49,6 @@ public class ContactUsSteps extends DriverFactory {
 
     @And("^logs out$")
     public void Logout(){
-        Assert.assertTrue(false);
         //tempObj.getNavBarActions().clickSignOut();
         //Log.info("Signed out successfully");
     }

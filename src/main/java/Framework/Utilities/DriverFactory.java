@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -60,22 +61,22 @@ public class DriverFactory {
             case "chrome":
                 System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver.exe");
                 ChromeOptions options = new ChromeOptions();
-                //HashMap<String, Object> cPrefs = new HashMap<String, Object>();
-                //cPrefs.put("profile.default_content_settings.popups", 0);
-                //cPrefs.put("download.default_directory", System.getProperty("user.dir"));
+                HashMap<String, Object> cPrefs = new HashMap<String, Object>();
+                cPrefs.put("profile.default_content_settings.popups", 0);
+                cPrefs.put("download.default_directory", System.getProperty("user.dir"));
                 if (prop.getProperty("Headless").equalsIgnoreCase("true")) {
                     //cPrefs.put("cmd", "Page.setDownloadBehavior");
                     options.setHeadless(true);
-                    //options.addArguments("--test-type");
-                    //options.addArguments("--disable-extensions"); //to disable browser extension popup
-                    //Map<String, String> param = new HashMap<>();
-                    //param.put("behavior", "allow");
-                    //param.put("downloadPath", System.getProperty("user.dir"));
-                    //cPrefs.put("params", param);
+                    options.addArguments("--test-type");
+                    options.addArguments("--disable-extensions"); //to disable browser extension popup
+                    Map<String, String> param = new HashMap<>();
+                    param.put("behavior", "allow");
+                    param.put("downloadPath", System.getProperty("user.dir"));
+                    cPrefs.put("params", param);
                     options.addArguments("window-size=1920,1080");
                     Log.info("Headless activated");
                 }
-                //options.setExperimentalOption("prefs", cPrefs);
+                options.setExperimentalOption("prefs", cPrefs);
                 driver = new ChromeDriver(options);
                 Log.info("Chrome driver initialised");
                 break;
@@ -109,10 +110,10 @@ public class DriverFactory {
                         cOptions.addArguments("window-size=1920,1080");
                         Log.info("Headless Grid activated");
                     }
-                    //HashMap<String, Object> cPrefs2 = new HashMap<String, Object>();
-                    //cPrefs2.put("profile.default_content_settings.popups", 0);
-                    //cPrefs2.put("download.default_directory", System.getProperty("user.dir"));
-                    //cOptions.setExperimentalOption("prefs", cPrefs2);
+                    HashMap<String, Object> cPrefs2 = new HashMap<String, Object>();
+                    cPrefs2.put("profile.default_content_settings.popups", 0);
+                    cPrefs2.put("download.default_directory", System.getProperty("user.dir"));
+                    cOptions.setExperimentalOption("prefs", cPrefs2);
                     try {
                         driver = new RemoteWebDriver(new URL(prop.getProperty("nodeURL")), cOptions);
                         Log.info("Chrome Grid driver initialised");

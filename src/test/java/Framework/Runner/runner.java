@@ -9,7 +9,7 @@ import cucumber.api.CucumberOptions;
 @RunWith(ExtendedCucumber.class)
 @ExtendedCucumberOptions(
         jsonReport = "target/cucumber.json",
-        retryCount = 0,
+        retryCount = 1,
         detailedReport = true,
         detailedAggregatedReport = true,
         overviewReport = true,
@@ -19,7 +19,7 @@ import cucumber.api.CucumberOptions;
         includeCoverageTags = {"@passed"},
         outputFolder = "target/site"
 )
-@CucumberOptions(strict = false, features = "src/test/resources/Features/Ex2.feature",
+@CucumberOptions(strict = false, features = "src/test/resources/Features",
         glue = "Framework.stepDefinitions", format = { "pretty",
         "html:target/site/cucumber-pretty",
         "json:target/cucumber.json" }, tags = { "~@ignore" })

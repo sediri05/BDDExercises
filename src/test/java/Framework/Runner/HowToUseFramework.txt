@@ -1,0 +1,20 @@
+The following browser capabilities are available:
+- Firefox
+- Firefox Headless
+- Chrome
+- Chrome headless except for the feature file which involves the download functionality (Ex4.feature)
+- Grid firefox
+- Grid firefox headless
+
+
+How to use the framework:
+Under the Utilities package, located in "src" -> "main" -> "java" -> "Framework", there is a "Data.properties" file.
+Here you can set all the different variables used in this framework.
+The notable variables are Browser, Headless, GridBrowser and nodeURL.
+Furthermore, for Ex1, the number attached to the registerEmail variable will have to be incremented each time this feature is run.
+
+
+Framework output:
+For failure screenshots, please see the html report generated under "target/site/cucumber-pretty".
+For Logs, please see "target/Logs" folder.
+Furthermore, there are 3 more detailed reports available under "target/site".
