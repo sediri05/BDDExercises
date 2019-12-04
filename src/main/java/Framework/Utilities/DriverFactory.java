@@ -21,8 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 public class DriverFactory {
     public static WebDriver driver;
@@ -31,22 +30,26 @@ public class DriverFactory {
     public static WebDriverWait wait10;
     public static ArrayList<String> prices = new ArrayList<>();
     public static ArrayList<String> items = new ArrayList<>();
-    public static Logger log;
 
 
     public void setUp(String scenarioName) {
         prop = new Properties();
         try {
-            log =LogManager.getLogger(scenarioName);
-            log.debug("Initialising log4j");
+            Log.startLog(scenarioName);
+            Log.debug("Initialising log4j");
             ip = new FileInputStream(System.getProperty("user.dir") + "/src/main/java/Framework/Utilities/Data.properties");
             prop.load(ip);
+            Log.info("Data File has been loaded");
             driver = GetDriver(prop);
             wait10 = new WebDriverWait(driver, 10);
+            Log.info("10 second explicit wait setup successful");
             driver.manage().deleteAllCookies();
             driver.manage().window().maximize();
             driver.get(prop.getProperty("URL"));
+            Log.info("Driver setup successful");
         } catch (Exception e) {
+            e.printStackTrace();
+            Log.error("Error in set up");
             e.printStackTrace();
         }
     }
@@ -57,9 +60,9 @@ public class DriverFactory {
             case "chrome":
                 System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver.exe");
                 ChromeOptions options = new ChromeOptions();
-                HashMap<String, Object> cPrefs = new HashMap<String, Object>();
-                cPrefs.put("profile.default_content_settings.popups", 0);
-                cPrefs.put("download.default_directory", System.getProperty("user.dir"));
+                //HashMap<String, Object> cPrefs = new HashMap<String, Object>();
+                //cPrefs.put("profile.default_content_settings.popups", 0);
+                //cPrefs.put("download.default_directory", System.getProperty("user.dir"));
                 if (prop.getProperty("Headless").equalsIgnoreCase("true")) {
                     //cPrefs.put("cmd", "Page.setDownloadBehavior");
                     options.setHeadless(true);
@@ -70,9 +73,11 @@ public class DriverFactory {
                     //param.put("downloadPath", System.getProperty("user.dir"));
                     //cPrefs.put("params", param);
                     options.addArguments("window-size=1920,1080");
+                    Log.info("Headless activated");
                 }
-                options.setExperimentalOption("prefs", cPrefs);
+                //options.setExperimentalOption("prefs", cPrefs);
                 driver = new ChromeDriver(options);
+                Log.info("Chrome driver initialised");
                 break;
             case "firefox":
                 System.setProperty("webdriver.gecko.driver", System.getProperty("user.dir") + "/src/main/resources/geckodriver.exe");
@@ -85,10 +90,12 @@ public class DriverFactory {
                 fxProfile.setPreference("pdfjs.disabled", true);
                 if (prop.getProperty("Headless").equalsIgnoreCase("true")) {
                     fOptions.setHeadless(true);
+                    Log.info("Headless activated");
+                    fOptions.addArguments("window-size=1920,1080");
                 }
-                fOptions.addArguments("window-size=1920,1080");
                 fOptions.setProfile(fxProfile);
                 driver = new FirefoxDriver((fOptions));
+                Log.info("Firefox driver initialised");
                 break;
             case "grid":
                 if (prop.getProperty("GridBrowser").equalsIgnoreCase("chrome")) {
@@ -100,15 +107,18 @@ public class DriverFactory {
                     if (prop.getProperty("Headless").equalsIgnoreCase("True")) {
                         cOptions.setHeadless(true);
                         cOptions.addArguments("window-size=1920,1080");
+                        Log.info("Headless Grid activated");
                     }
-                    HashMap<String, Object> cPrefs2 = new HashMap<String, Object>();
-                    cPrefs2.put("profile.default_content_settings.popups", 0);
-                    cPrefs2.put("download.default_directory", System.getProperty("user.dir"));
-                    cOptions.setExperimentalOption("prefs", cPrefs2);
+                    //HashMap<String, Object> cPrefs2 = new HashMap<String, Object>();
+                    //cPrefs2.put("profile.default_content_settings.popups", 0);
+                    //cPrefs2.put("download.default_directory", System.getProperty("user.dir"));
+                    //cOptions.setExperimentalOption("prefs", cPrefs2);
                     try {
                         driver = new RemoteWebDriver(new URL(prop.getProperty("nodeURL")), cOptions);
+                        Log.info("Chrome Grid driver initialised");
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
+                        Log.error("Error in Chrome Grid initialisation");
                     }
                 } else if (prop.getProperty("GridBrowser").matches("firefox")) {
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -119,6 +129,7 @@ public class DriverFactory {
                     if (prop.getProperty("Headless").equalsIgnoreCase("True")) {
                         firefoxOptions.setHeadless(true);
                         firefoxOptions.addArguments("window-size=1920,1080");
+                        Log.info("Headless Grid activated");
                     }
                     FirefoxProfile fxProfile2 = new FirefoxProfile();
                     fxProfile2.setPreference("browser.download.folderList", 2);
@@ -129,8 +140,10 @@ public class DriverFactory {
                     firefoxOptions.setProfile(fxProfile2);
                     try {
                         driver = new RemoteWebDriver(new URL(prop.getProperty("nodeURL")), firefoxOptions);
+                        Log.info("Firefox Grid initialised");
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
+                        Log.error("Error in firefox grid initialisation");
                     }
                 }
                 break;
@@ -144,8 +157,11 @@ public class DriverFactory {
         try {
             ip.close();
             driver.quit();
+            Log.info("Tear down successful");
+            Log.endLog("Test is Finished");
         } catch (IOException e) {
             e.printStackTrace();
+            Log.error("Error in tear down");
         }
     }
 
@@ -156,6 +172,7 @@ public class DriverFactory {
         }
         sum = sum + 2;
         BigDecimal bd = new BigDecimal(sum).setScale(2, RoundingMode.HALF_UP);
+        Log.info("Total Price calculated");
         return bd.doubleValue();
     }
 
@@ -165,8 +182,10 @@ public class DriverFactory {
             prop.setProperty(Attribute, newValue);
             prop.store(out, null);
             out.close();
+            Log.info(Attribute + " written to data file");
         } catch (Exception e) {
             e.printStackTrace();
+            Log.error("Error writing" + Attribute + " to file");
         }
     }
 }

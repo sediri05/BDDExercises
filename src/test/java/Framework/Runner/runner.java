@@ -8,8 +8,8 @@ import cucumber.api.CucumberOptions;
 
 @RunWith(ExtendedCucumber.class)
 @ExtendedCucumberOptions(
-        jsonReport = "target/site/cucumber.json",
-        retryCount = 1,
+        jsonReport = "target/cucumber.json",
+        retryCount = 0,
         detailedReport = true,
         detailedAggregatedReport = true,
         overviewReport = true,
@@ -19,10 +19,10 @@ import cucumber.api.CucumberOptions;
         includeCoverageTags = {"@passed"},
         outputFolder = "target/site"
 )
-@CucumberOptions(strict = false, features = "src/test/java/Framework/Features/Ex2.feature",
+@CucumberOptions(strict = false, features = "src/test/resources/Features/Ex2.feature",
         glue = "Framework.stepDefinitions", format = { "pretty",
         "html:target/site/cucumber-pretty",
-        "json:target/site/cucumber.json" }, tags = { "~@ignore" })
+        "json:target/cucumber.json" }, tags = { "~@ignore" })
 public class runner {
 
 }

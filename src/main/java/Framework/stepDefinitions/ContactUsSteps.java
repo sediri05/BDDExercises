@@ -2,6 +2,7 @@ package Framework.stepDefinitions;
 
 import Framework.Managers.PageObjectManager;
 import Framework.Utilities.DriverFactory;
+import Framework.Utilities.Log;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -13,27 +14,34 @@ public class ContactUsSteps extends DriverFactory {
     @Given("^the User is on the Sign In Page$")
     public void NavigateToSignInPage() {
         tempObj.getNavBarActions().clickSignIn();
+        Log.info("Signed in successfully");
     }
 
     @When("^the User goes to the Contact Page$")
     public void NavigateToContactPage(){
         tempObj.getNavBarActions().clickContactUs();
+        Log.info("Navigated to Contact Us page");
     }
 
     @And("^inputs the details with an attachment included$")
     public void InputDetails(){
         tempObj.getContactUsActions().enterDetails();
+        Log.info("Details entered");
         tempObj.getContactUsActions().attachFile();
+        Log.info("text file is attached");
     }
 
     @Then("^the User is able to successfully submit the query$")
     public void SubmitMessage(){
         tempObj.getContactUsActions().submit();
+        Log.info("Query is submitted");
         tempObj.getContactUsActions().validateSuccess();
+        Log.info("Successful submission");
     }
 
     @And("^logs out$")
     public void Logout(){
         //tempObj.getNavBarActions().clickSignOut();
+        //Log.info("Signed out successfully");
     }
 }
